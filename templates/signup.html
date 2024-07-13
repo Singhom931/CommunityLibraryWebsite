@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Sign-Up</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            /* Add background image */
+            background-image: url('/static/images/pic.avif');
+            /* Set background size and other properties */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* Optional: You can also add a background color */
+            background-color: #f8f9fa; /* Fallback color if the image is not available */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Sign Up</h2>
+        <form id="signup-form" action="{{ url_for('signup') }}" method="post">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" name="username" id="username" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Listen for the response from the form submission
+            document.getElementById('signup-form').onsubmit = function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '{{ url_for("signup") }}', true);
+                xhr.responseType = 'blob';
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        // Create a link to download the file
+                        const blob = new Blob([xhr.response], { type: 'text/plain' });
+                        const link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = 'reset_code.txt';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        // Redirect to the login page
+                        const redirectUrl = xhr.getResponseHeader('X-Redirect');
+                        if (redirectUrl) {
+                            window.location.href = redirectUrl;
+                        }
+                    }
+                };
+
+                const formData = new FormData(document.getElementById('signup-form'));
+                xhr.send(formData);
+            };
+        });
+    </script>
+
+    <!-- Bootstrap JS and dependencies (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

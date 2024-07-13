@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            /* Add background image */
+            background-image: url('/static/images/pic.avif');
+            /* Set background size and other properties */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* Optional: You can also add a background color */
+            background-color: #f8f9fa; /* Fallback color if the image is not available */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Welcome to Your Dashboard</h1>
+        <p class="lead">Hello, {{ username }}!</p>
+        
+        <!-- Search Form -->
+        <form action="{{ url_for('dashboard') }}" method="post" class="form-inline mb-4">
+            <input type="text" name="query" class="form-control mr-2" placeholder="Search by title">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <!-- Display Search Results -->
+        {% if query %}
+            <h2>Search Results for "{{ query }}"</h2>
+            {% if books %}
+                <ul class="list-group mb-4">
+                    {% for book in books %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ book.title }} by {{ book.author }}
+                        <a href="{{ url_for('download_book', book_id=book.id) }}" class="btn btn-primary btn-sm">Download</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No results found.</p>
+            {% endif %}
+        {% else %}
+            <h2>All Books</h2>
+            {% if books %}
+                <ul class="list-group mb-4">
+                    {% for book in books %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ book.title }} by {{ book.author }}
+                        <a href="{{ url_for('download_book', book_id=book.id) }}" class="btn btn-primary btn-sm">Download</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No books available.</p>
+            {% endif %}
+        {% endif %}
+
+        <!-- Logout Button -->
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and dependencies (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
